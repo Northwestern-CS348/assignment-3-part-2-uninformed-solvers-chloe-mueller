@@ -96,7 +96,6 @@ class KBTest(unittest.TestCase):
         self.assertFalse(th.isWon())
 
         solver = SolverDFS(th,((),(),(1,2,3)))
-
         self.runPlayXSteps(solver, [
             # [step, expected game state]
             [3, ((3,), (2,), (1,))],

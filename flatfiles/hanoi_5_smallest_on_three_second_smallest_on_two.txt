@@ -41,6 +41,6 @@ fact: (top disk1 peg3)
 
 rule: ((bigger ?d ?d2) (bigger ?d2 ?d3)) -> (bigger ?d ?d3)
 #if peg is empty
-rule: ((top ?d ?p) (empty ?p2)) -> (movable ?d ?p ?p2)
+rule: ((on ?d ?p) (top ?d ?p) (empty ?p2)) -> (movable ?d ?p ?p2)
 #if not empty
-rule: ((top ?d ?p) (top ?d2 ?p2) (bigger ?d2 ?d)) -> (movable ?d ?p ?p2)
+rule: ((on ?d ?p) (top ?d ?p) (top ?d2 ?p2) (bigger ?d2 ?d)) -> (movable ?d ?p ?p2)

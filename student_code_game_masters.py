@@ -99,7 +99,7 @@ class TowerOfHanoiGame(GameMaster):
         """
         ### Student code goes here
 
-        if GameMaster.isMovableLegal(self, movable_statement):
+        if self.isMovableLegal(movable_statement):
 
             vars = movable_statement.terms
             currDisk = str(vars[0])
@@ -108,6 +108,7 @@ class TowerOfHanoiGame(GameMaster):
 
             # assert and retract ON facts
             self.kb.kb_retract(parse_input('fact: (on '+currDisk+' '+oldPeg+')'))
+            self.kb.kb_retract(parse_input('fact: (top '+currDisk+' '+oldPeg+')'))
             self.kb.kb_assert(parse_input('fact: (on '+currDisk+' '+newPeg+')'))
 
             #find what its onTopOf
@@ -136,13 +137,7 @@ class TowerOfHanoiGame(GameMaster):
                 self.kb.kb_retract(parse_input('fact: (empty '+newPeg+')'))
                 self.kb.kb_assert(parse_input('fact: (top '+currDisk+' '+newPeg+')'))
 
-        pass
 
-
-
-
-
-        pass
 
     def reverseMove(self, movable_statement):
         """
