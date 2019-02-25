@@ -62,6 +62,8 @@ class SolverDFS(UninformedSolver):
 class SolverBFS(UninformedSolver):
     def __init__(self, gameMaster, victoryCondition):
         super().__init__(gameMaster, victoryCondition)
+        self.queue = []
+        self.head = 0
 
     def solveOneStep(self):
         """
@@ -77,4 +79,67 @@ class SolverBFS(UninformedSolver):
             True if the desired solution state is reached, False otherwise
         """
         ### Student code goes here
-        return True
+        if self.currentState.state == self.victoryCondition:
+            return True
+        #if the children haven't been enqueued, add them
+        if not self.currentState.children:
+            moves = self.gm.getMovables()
+            for m in moves:
+                self.gm.makeMove(m)
+                newState = GameState(self.gm.getGameState(), self.currentState.depth + 1, m)
+                newState.parent = self.currentState
+                self.currentState.children.append(newState)
+                self.queue.append(newState)
+                self.gm.reverseMove(m)
+        #if haven't gone through whole queue
+        while self.head < len(self.queue):
+            #get next from queue
+            nextNode = self.queue[self.head]
+            self.head += 1
+            #if visited, go to next
+            if nextNode in self.visited:
+                continue
+            #see if new Node is a child of oldNode
+            if nextNode.parent == self.currentState:
+                self.currentState = nextNode
+                self.gm.makeMove(self.currentState.requiredMovable)
+                self.visited[self.currentState] = True
+                if self.currentState.state == self.victoryCondition:
+                    return True
+                else:
+                    return False
+            #if sibling depth and parent are the same
+            if nextNode.parent == self.currentState.parent and nextNode.depth == self.currentState.depth:
+                #reverse move to get to parent
+                self.gm.reverseMove(self.currentState.requiredMovable)
+                self.gm.makeMove(nextNode.requiredMovable)
+                self.currentState = nextNode
+                self.visited[self.currentState] = True
+                if self.currentState.state == self.victoryCondition:
+                    return True
+                else:
+                    return False
+            #else: its a cousin or a nephew
+            else:
+                #go to the head of the tree
+                while self.currentState.parent:
+                    self.gm.reverseMove(self.currentState.requiredMovable)
+                    self.currentState = self.currentState.parent
+                curr = nextNode
+                reqMoves = []
+                #go up the tree
+                while curr.parent:
+                    reqMoves.append(curr.requiredMovable)
+                    curr = curr.parent
+                reqMoves.reverse()
+                #make moves until you reach depth
+                i = 0
+                while i < nextNode.depth:
+                    self.gm.makeMove(reqMoves[i])
+                    i += 1
+                self.currentState = nextNode
+                self.visited[self.currentState] = True
+                if self.currentState.state == self.victoryCondition:
+                    return True
+                else:
+                    return False
